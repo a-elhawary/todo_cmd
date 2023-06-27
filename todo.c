@@ -19,7 +19,7 @@ int stringToNum(char *string){
 }
 
 char * getFileName(char *group){
-  char * name = (char *)malloc(sizeof(char) * 50);
+  char * name = (char *)calloc(50, sizeof(char));
   strcpy(name, PATH);
   strcat(name, group);
   return name;
@@ -27,7 +27,9 @@ char * getFileName(char *group){
 
 FILE * openFile(char *group, char* mode){
   FILE *fp = NULL;
-  fp = fopen(getFileName(group), mode);
+  char *name = getFileName(group);
+  fp = fopen(name, mode);
+  free(name);
   return fp;
 }
 
@@ -83,7 +85,11 @@ void removeItem(char *group, int number){
   }
   fclose(fp);
   fclose(newFp);
-  rename(getFileName("replica"), getFileName(group));
+  char *replicaName = getFileName("replica");
+  char *groupName = getFileName(group);
+  rename(replicaName, groupName);
+  free(replicaName);
+  free(groupName);
 }
 
 void addGroup(char *group){
